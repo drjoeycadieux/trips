@@ -1,10 +1,8 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
-
-const prisma = new PrismaClient();
 
 export default async function TripsPage() {
     const session = await getServerSession(authOptions);

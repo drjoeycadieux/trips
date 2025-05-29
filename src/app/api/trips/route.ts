@@ -1,15 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { PrismaClient } from '@prisma/client';
-import { authOptions } from '../auth/[...nextauth]/route';
-
-const prisma = new PrismaClient();
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
     try {
         const session = await getServerSession(authOptions);
 
-        if (!session?.user) {
+        if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -36,20 +34,24 @@ export async function POST(req: Request) {
     try {
         const session = await getServerSession(authOptions);
 
-        if (!session?.user) {
+        if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        } const body = await req.json();
+        console.log('Received request body:', body);
+        console.log('Session:', session);
 
-        const { title, description, startDate, endDate, location } = await req.json();
+        const { title, description, startDate, endDate, location } = body;
 
         // Validate required fields
         if (!title || !startDate || !endDate || !location) {
+            console.error('Missing fields:', { title, startDate, endDate, location });
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }
             );
         }
 
+        // Create trip
         const trip = await prisma.trip.create({
             data: {
                 title,
@@ -57,7 +59,7 @@ export async function POST(req: Request) {
                 startDate: new Date(startDate),
                 endDate: new Date(endDate),
                 location,
-                userId: session.user.id,
+                userId: session.user.id
             },
         });
 
@@ -65,7 +67,7 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error('Error creating trip:', error);
         return NextResponse.json(
-            { error: 'Error creating trip' },
+            { error: 'Error creating trip: ' + (error instanceof Error ? error.message : String(error)) },
             { status: 500 }
         );
     }
