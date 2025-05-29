@@ -3,6 +3,17 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
+import DeleteTripButton from '@/components/DeleteTripButton';
+
+async function getTripData(id: string, userId: string) {
+    const trip = await prisma.trip.findUnique({
+        where: {
+            id: id,
+            userId: userId,
+        },
+    });
+    return trip;
+}
 
 export default async function TripPage({
     params,
@@ -15,12 +26,7 @@ export default async function TripPage({
         redirect('/login');
     }
 
-    const trip = await prisma.trip.findUnique({
-        where: {
-            id: params.id,
-            userId: session.user.id,
-        },
-    });
+    const trip = await getTripData(params.id, session.user.id);
 
     if (!trip) {
         return (
@@ -45,30 +51,30 @@ export default async function TripPage({
                     >
                         Edit Trip
                     </Link>
+                    <DeleteTripButton tripId={trip.id} />
                     <Link href="/trips" className="text-gray-500 hover:text-gray-600">
                         Back to Trips
                     </Link>
                 </div>
             </div>
-
-            <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
-                <div>
-                    <h2 className="text-lg font-semibold mb-2">Description</h2>
-                    <p className="text-gray-600">{trip.description || 'No description provided.'}</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
+            <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="space-y-4">
                     <div>
-                        <h2 className="text-lg font-semibold mb-2">Location</h2>
+                        <h2 className="text-lg font-semibold">Location</h2>
                         <p className="text-gray-600">{trip.location}</p>
                     </div>
                     <div>
-                        <h2 className="text-lg font-semibold mb-2">Dates</h2>
+                        <h2 className="text-lg font-semibold">Dates</h2>
                         <p className="text-gray-600">
-                            {new Date(trip.startDate).toLocaleDateString()} -{' '}
-                            {new Date(trip.endDate).toLocaleDateString()}
+                            {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
                         </p>
                     </div>
+                    {trip.description && (
+                        <div>
+                            <h2 className="text-lg font-semibold">Description</h2>
+                            <p className="text-gray-600">{trip.description}</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
