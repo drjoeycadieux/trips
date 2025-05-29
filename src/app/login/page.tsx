@@ -28,7 +28,7 @@ export default function LoginPage() {
                 router.push('/trips');
                 router.refresh();
             }
-        } catch (error) {
+        } catch (e) {
             setError('An error occurred. Please try again.');
         }
     };
