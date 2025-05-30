@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import Navigation from "@/components/Navigation";
 import AlertBanner from "@/components/AlertBanner";
+import LiveChat from "@/components/LiveChat";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
           <main className="max-w-7xl mx-auto px-4 py-8">
             {children}
           </main>
+          <LiveChat />
         </AuthProvider>
       </body>
     </html>
