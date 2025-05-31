@@ -16,9 +16,7 @@ export default function LiveChat() {
 
     const toggleChat = () => {
         setIsOpen(!isOpen);
-    };
-
-    const sendMessage = (e: React.FormEvent) => {
+    }; const sendMessage = (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputMessage.trim()) return;
 
@@ -32,16 +30,37 @@ export default function LiveChat() {
         setMessages([...messages, newMessage]);
         setInputMessage('');
 
-        // Simulate support response
+        // Smart auto-responses based on keywords
         setTimeout(() => {
+            const userText = inputMessage.toLowerCase();
+            let responseText = "";
+
+            if (userText.includes('price') || userText.includes('cost') || userText.includes('payment')) {
+                responseText = "Our trip planning service is completely free! You can create, edit, and manage unlimited trips at no cost. Is there anything specific about pricing you'd like to know?";
+            } else if (userText.includes('help') || userText.includes('how') || userText.includes('tutorial')) {
+                responseText = "I'd be happy to help! You can create a new trip by clicking 'New Trip', add details like destination and dates, and manage everything from your dashboard. Would you like me to walk you through any specific feature?";
+            } else if (userText.includes('delete') || userText.includes('remove')) {
+                responseText = "To delete a trip, go to the trip details page and click the 'Delete Trip' button. You'll get a confirmation prompt to make sure. Need help finding a specific trip?";
+            } else if (userText.includes('edit') || userText.includes('change') || userText.includes('update')) {
+                responseText = "You can edit any trip by clicking 'Edit' on the trip card or 'Edit Trip' on the trip details page. All your trip information can be updated anytime!";
+            } else if (userText.includes('account') || userText.includes('register') || userText.includes('login')) {
+                responseText = "You can create an account by clicking 'Register' in the top navigation. Already have an account? Just click 'Login'. Your trips are saved securely to your account.";
+            } else if (userText.includes('bug') || userText.includes('error') || userText.includes('problem') || userText.includes('issue')) {
+                responseText = "I'm sorry you're experiencing an issue! Could you describe what's happening? In the meantime, try refreshing the page or clearing your browser cache. I'll make sure our team looks into this.";
+            } else if (userText.includes('thank') || userText.includes('thanks')) {
+                responseText = "You're very welcome! I'm here whenever you need help with your trip planning. Happy travels! 🧳✈️";
+            } else {
+                responseText = "Thanks for your message! I understand you're asking about: '" + inputMessage + "'. Let me connect you with our support team for personalized assistance. In the meantime, you can explore our features or check out the help section.";
+            }
+
             const supportResponse = {
                 id: messages.length + 2,
-                text: "Thanks for your message! Our support team will get back to you shortly. In the meantime, you can browse our help section or continue planning your trips.",
+                text: responseText,
                 sender: 'support',
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, supportResponse]);
-        }, 1000);
+        }, 1500);
     };
 
     return (
@@ -63,9 +82,7 @@ export default function LiveChat() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
-                    </div>
-
-                    {/* Messages */}
+                    </div>                    {/* Messages */}
                     <div className="flex-1 p-4 overflow-y-auto space-y-3">
                         {messages.map((message) => (
                             <div
@@ -74,14 +91,41 @@ export default function LiveChat() {
                             >
                                 <div
                                     className={`max-w-xs px-3 py-2 rounded-lg text-sm ${message.sender === 'user'
-                                            ? 'bg-blue-600 text-white'
-                                            : 'bg-gray-100 text-gray-800'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-100 text-gray-800'
                                         }`}
                                 >
                                     {message.text}
                                 </div>
                             </div>
                         ))}
+
+                        {/* Quick Action Buttons - Show only if first message */}
+                        {messages.length === 1 && (
+                            <div className="space-y-2">
+                                <p className="text-xs text-gray-500 text-center">Quick Help:</p>
+                                <div className="flex flex-wrap gap-2">
+                                    <button
+                                        onClick={() => setInputMessage("How do I create a new trip?")}
+                                        className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs hover:bg-blue-200 transition-colors"
+                                    >
+                                        Create Trip
+                                    </button>
+                                    <button
+                                        onClick={() => setInputMessage("How do I edit my trip?")}
+                                        className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs hover:bg-blue-200 transition-colors"
+                                    >
+                                        Edit Trip
+                                    </button>
+                                    <button
+                                        onClick={() => setInputMessage("I found a bug")}
+                                        className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs hover:bg-red-200 transition-colors"
+                                    >
+                                        Report Issue
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Input */}
