@@ -1,11 +1,13 @@
 [build]
-  command = "npm run build"
+  command = "npm run build:netlify"
   publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--version"
   NEXT_PUBLIC_SITE_URL = "https://your-site-url.netlify.app"
+  # You'll need to set DATABASE_URL in Netlify's environment variables
+  # DATABASE_URL = "postgresql://user:password@host:port/database"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
