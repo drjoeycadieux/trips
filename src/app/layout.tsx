@@ -26,7 +26,7 @@ export default function RootLayout({
         <AuthProvider>
           <AlertBanner />
           <Navigation />
-          <main className="max-w-7xl mx-auto px-4 py-8">
+          <main>
             {children}
           </main>
           <LiveChat />

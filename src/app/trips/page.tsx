@@ -18,10 +18,8 @@ export default async function TripsPage() {
         orderBy: {
             startDate: 'asc',
         },
-    });
-
-    return (
-        <div>
+    }); return (
+        <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">My Trips</h1>
                 <Link
