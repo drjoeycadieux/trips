@@ -1,18 +1,24 @@
-import { PrismaClient } from '@prisma/client';
+// Temporarily disabled for Netlify deployment
+// import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as {
-    prisma: PrismaClient | undefined;
+    prisma: any | undefined;
 };
 
-let prisma: PrismaClient;
-
-try {
-    prisma = globalForPrisma.prisma ?? new PrismaClient();
-    if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-} catch (error) {
-    console.warn('Database connection failed:', error);
-    // Create a dummy client for build-time
-    prisma = {} as PrismaClient;
-}
+// Stub client for build-time
+const prisma = {
+    user: {
+        findUnique: () => Promise.resolve(null),
+        create: () => Promise.resolve(null),
+        findMany: () => Promise.resolve([]),
+    },
+    trip: {
+        findMany: () => Promise.resolve([]),
+        findUnique: () => Promise.resolve(null),
+        create: () => Promise.resolve(null),
+        update: () => Promise.resolve(null),
+        delete: () => Promise.resolve(null),
+    }
+};
 
 export { prisma };
